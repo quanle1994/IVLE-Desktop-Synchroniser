@@ -1,0 +1,74 @@
+<style>
+    #page-wrapper {
+        padding: 10px 10px;
+        font-size: 15px;
+    }
+
+    #page-body {
+        background-color: rgba(255,255,255,0.5);
+        border-radius: 5px;
+        padding: 10px 10px;
+    }
+
+    #module-name {
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    #forum-header {
+        font-size: 17px;
+    }
+
+    .reply-template {
+        margin: 10px;
+    }
+
+    .name-tag-template {
+        padding: 10px;
+        background-color: rgba(112,112,112, 0.5);
+        border-top-right-radius: 5px;
+        border-top-left-radius: 5px;
+        float: left;
+    }
+
+    .reply-body {
+        padding: 10px;
+        border-bottom-right-radius: 5px;
+        border-bottom-left-radius: 5px;
+    }
+
+    .old-post {
+        -fx-background-color: rgba(91,134,229, 0.5);
+    }
+
+    .new-post {
+        background-color: rgba(137,247,254, 0.5);
+    }
+</style>
+<script>
+    window.onload = function() {
+        var objDiv = document.getElementById("page-wrapper");
+        objDiv.scrollTop = objDiv.scrollHeight;
+    }
+</script>
+<body style="width: 100vw; height: 100vh; background: url('REPLACE_URL'); font-family: Verdana; overflow: hidden;">
+<div id="page-wrapper">
+    <div id="module-name" style="width: 100vw; text-align: center;">AAAAAAAAAAA</div>
+    <div id="forum-header" style="width: 100vw; text-align: center;">AAAAAAAAAAA</div>
+    <div id="page-body">
+        <div class="reply-template">
+            <div style="width: 100%; overflow: hidden;">
+                <div class="name-tag-template" style="max-width: 50vw; word-wrap: break-word">
+                    <div class="poster-name">Name: AAAAAAAAAAAAAAAAAAAAAA</div>
+                    <div class="poster-email">Email: A</div>
+                </div>
+            </div>
+            <div class="reply-body new-post">
+                <div class="post-title">A</div>
+                <div class="post-body">A</div>
+                <div class="post-time">A</div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
