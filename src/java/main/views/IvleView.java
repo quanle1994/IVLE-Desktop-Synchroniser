@@ -4,12 +4,15 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -20,6 +23,7 @@ import main.controllers.IvleDownloader;
 import main.models.*;
 import main.models.Module;
 import main.utils.Cache;
+import main.utils.ForumViewHtmlGenerator;
 import main.utils.Workbin;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.w3c.dom.Node;
@@ -35,41 +39,46 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 public class IvleView {
+    public static final SimpleDateFormat DATE_PARSER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    public static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("EEE dd-MM-yyy HH:mm");
+    public static final SimpleDateFormat DATE_PARSER_GROUP = new SimpleDateFormat("yyyy-MM-dd");
+    public static final SimpleDateFormat DATE_FORMATTER_GROUP = new SimpleDateFormat("EEE dd-MM-yyy");
+    private static final int THREAD_NUMBER = 5;
     public ScrollPane timeScrollPane;
     public ScrollPane moduleScrollPane;
+    public ScrollPane favScrollPane;
     public VBox contentVbox;
     public ScrollPane contentScrollPane;
-    private VBox moduleScrollContent = new VBox();
-    private VBox timeScrollContent = new VBox();
+    public VBox rightVbox;
     private Controller controller = Controller.getInstance();
+    private HBox previous = null;
     private IvleDownloader ivleDownloader = IvleDownloader.getInstance();
+    private List<String> timeList = new ArrayList<>();
+    private List<String> proceed = new ArrayList<>();
+    private Map<NotificationItem, HBox> timeItemMap = new HashMap<>();
+    private Map<NotificationItem, HBox> moduleItemMap = new HashMap<>();
+    private Map<NotificationItem, HBox> favItemMap = new HashMap<>();
     private Map<String, Module> modules = new HashMap<>();
     private Map<String, Workbin> workbins = new HashMap<>();
     private Map<String, File> files = new HashMap<>();
     private Map<String, Announcement> announcementHashMap = new HashMap<>();
     private Map<String, ThreadNode> threadNodeHashMap = new HashMap<>();
     private Map<String, NotificationItem> notificationItemMap = new HashMap<>();
-    private TreeSet<String> existingFilePaths = new TreeSet<>();
     private Map<String, Map<String, List<HBox>>> timeMap = new HashMap<>();
     private Map<String, Map<String, List<HBox>>> moduleMap = new HashMap<>();
-    private List<String> timeList = new ArrayList<>();
     private Set<String> addedHeaders = new TreeSet<>();
-    private List<String> proceed = new ArrayList<>();
-    private static final SimpleDateFormat DATE_PARSER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-    private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("EEE dd-MM-yyy HH:mm");
-    private static final SimpleDateFormat DATE_PARSER_GROUP = new SimpleDateFormat("yyyy-MM-dd");
-    private static final SimpleDateFormat DATE_FORMATTER_GROUP = new SimpleDateFormat("EEE dd-MM-yyy");
-    private static final int THREAD_NUMBER = 5;
-    private Lock lock = new ReentrantLock();
+    private TreeSet<String> existingFilePaths = new TreeSet<>();
+    private VBox moduleScrollContent = new VBox();
+    private VBox timeScrollContent = new VBox();
+    private VBox favScrollContent = new VBox();
 
     public void initialize() {
         timeScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         moduleScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        favScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         Service<Void> ser = new Service<>() {
             @Override
             protected Task createTask() {
@@ -91,6 +100,7 @@ public class IvleView {
                             createNotiItems();
                             moduleScrollPane.setContent(moduleScrollContent);
                             timeScrollPane.setContent(timeScrollContent);
+                            favScrollPane.setContent(favScrollContent);
                         });
                         Thread.sleep(1000);
                     }
@@ -113,8 +123,9 @@ public class IvleView {
             for (Object result : results) {
                 Map<String, Object> moduleDetails = (Map<String, Object>) result;
                 String moduleId = moduleDetails.get("ID").toString();
-                modules.put(moduleId, new Module(moduleId, moduleDetails.get("CourseCode").toString(),
-                        moduleDetails.get("CourseName").toString().replace("/", "-")));
+                modules.put(moduleId, new Module(moduleId, moduleDetails.get("CourseCode").toString()
+                        .replace("/", "-"), moduleDetails.get("CourseName").toString()
+                        .replace("/", "-")));
                 ArrayList<Object> workbinObjects = (ArrayList<Object>) moduleDetails.get("Workbins");
                 for (Object workbinObject : workbinObjects) {
                     Map<String, Object> worbinDetails = (Map<String, Object>) workbinObject;
@@ -215,10 +226,12 @@ public class IvleView {
             String module = fileTag1.getModuleName();
             HBox fileTagTime = fileTag1.getFileRow();
             fileTagTime.getStyleClass().add("item-tag");
+            timeItemMap.put(notificationItem, fileTagTime);
 
             FileTag fileTag2 = new FileTag(notificationItem).invoke(false);
             HBox fileTagMod = fileTag2.getFileRow();
             fileTagMod.getStyleClass().add("item-tag");
+            moduleItemMap.put(notificationItem, fileTagMod);
 
             if (!timeList.contains(date)) timeList.add(date);
             setMap(date, actualDate, timeMap, fileTagTime);
@@ -411,7 +424,8 @@ public class IvleView {
             Map<String, Object> subThreadNodeMap = (Map<String,Object>) thread;
             String id = subThreadNodeMap.get("ID").toString();
             if (threadNodeHashMap.get(id) != null) continue;
-            String postBody = convertToPlainText(subThreadNodeMap.get("PostBody").toString());
+//            String postBody = convertToPlainText(subThreadNodeMap.get("PostBody").toString());
+            String postBody = subThreadNodeMap.get("PostBody").toString();
             String postDate = subThreadNodeMap.get("PostDate_js").toString();
             String postTitle = subThreadNodeMap.get("PostTitle").toString();
             Map<String, Object> poster = (Map<String, Object>) subThreadNodeMap.get("Poster");
@@ -422,12 +436,14 @@ public class IvleView {
             threadNodeHashMap.put(id, threadNode);
             notificationItemMap.put(id, threadNode);
             List<Object> subThreads = (ArrayList<Object>) subThreadNodeMap.get("Threads");
-            traverseForumThread(moduleId, headerId, headerTitle, subThreads, parentNodeId);
+            traverseForumThread(moduleId, headerId, headerTitle, subThreads, id);
         }
     }
 
     private String convertToPlainText(String richText) {
-        return richText.replace("&nbsp;", " ").replace("<br>", "");
+        return richText.replace("&nbsp;", " ").replace("<br>", "")
+                .replace("&#39;", "'").replace("&gt;", ">")
+                .replace("&quot;", "\"");
     }
 
     private void traverseDirectory(Workbin workbin, String directory, ArrayList<Object> folders) {
@@ -472,6 +488,17 @@ public class IvleView {
         fileType.getStyleClass().add("file-type-pane");
         Label fileName = new Label(fileTitle);
         fileName.getStyleClass().addAll("row-value", "title-value");
+        fileName.getStyleClass().add("hyperlink-style");
+        java.io.File file = new java.io.File(directoryValue);
+        fileName.setOnMouseClicked(event -> {
+            if (file.exists()) {
+                try {
+                    Desktop.getDesktop().open(file);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         Label sizeText = new Label("Size:");
         sizeText.getStyleClass().add("row-field");
         Label size = new Label(sizeValue);
@@ -480,6 +507,16 @@ public class IvleView {
         directoryText.getStyleClass().add("row-field");
         Label directory = new Label(directoryValue);
         directory.getStyleClass().add("row-value");
+        directory.getStyleClass().add("hyperlink-style");
+        directory.setOnMouseClicked(event -> {
+            try {
+                String command = "explorer.exe /select," + file.toURI();
+                System.out.println(command);
+                Runtime.getRuntime().exec(command);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
         Label dateText = new Label("Uploaded on:");
         dateText.getStyleClass().add("row-field");
         Label date = new Label(dateValue);
@@ -552,7 +589,6 @@ public class IvleView {
         engine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) ->
                 redirect(engine, newValue));
         engine.setJavaScriptEnabled(true);
-        engine.executeScript("window.onbeforeunload = function(){alert('TESTTEST');};");
         HBox titleRow = new HBox();
         titleRow.getStyleClass().add("row-wrapper");
         HBox notiTitleRow = new HBox();
@@ -574,52 +610,83 @@ public class IvleView {
                 notiDesRow);
     }
 
-    private void fillThreadNodeContent(String moduleName, ThreadNode forumThread, String formattedDate) {
+    private void fillThreadNodeContent(String moduleName, ThreadNode forumThread) {
         contentVbox.getChildren().clear();
-        Label module = getModuleNameBox(moduleName);
-        module.getStyleClass().add("title-row");
-        String headerTitle = forumThread.getHeaderTitle();
-        String postId = forumThread.getPostId();
+        WebView forumViewer = new WebView();
+        forumViewer.getStyleClass().add("background-pane");
+        forumViewer.setMinWidth(600);
+        forumViewer.setMinHeight(400);
+        WebEngine engine = forumViewer.getEngine();
         List<ThreadNode> threadNodes = getThreadNodes(forumThread);
         Collections.sort(threadNodes, Comparator.comparing(ThreadNode::getPostDate));
-        Label headerTitleLabel = new Label("Heading: " + headerTitle);
-        headerTitleLabel.getStyleClass().add("header-title");
-        contentVbox.getChildren().addAll(module, headerTitleLabel);
-        for (ThreadNode threadNode : threadNodes) {
-            String posterName = forumThread.getPosterName();
-            String posterEmail = forumThread.getPosterEmail();
-            String postTitle = "Title: " + forumThread.getPostTitle();
-            String postBody = forumThread.getPostBody();
-            String postDate = formattedDate;
-
-            VBox post = new VBox();
-
-            VBox posterBox = new VBox();
-            Label posterNameLabel = new Label(posterName);
-            posterNameLabel.getStyleClass().add("poster-box");
-            Label posterEmailLabel = new Label(posterEmail);
-            posterEmailLabel.getStyleClass().add("poster-box");
-            Label posterTitleLabel = new Label(postTitle);
-            posterTitleLabel.getStyleClass().add("poster-box");
-            posterBox.getChildren().addAll(posterNameLabel, posterEmailLabel, posterTitleLabel);
-            posterBox.getStyleClass().add("poster-box-wrapper");
-
-            VBox postBodyBox = new VBox();
-            VBox postBodyLabel = createBodyBox(postBody);
-            postBodyLabel.getStyleClass().add("post-body");
-            Label postDateLabel = new Label(postDate);
-            postBodyBox.getChildren().addAll(postBodyLabel, postDateLabel);
-            postBodyBox.getStyleClass().add("post-body-box");
-
-            post.getChildren().addAll(posterBox, postBodyBox);
-            post.getStyleClass().add("post");
-            contentVbox.getChildren().addAll(post);
-            if (threadNode.getPostId().equals(postId)) {
-                postBodyBox.getStyleClass().add("new-post");
-                break;
-            }
-            postBodyBox.getStyleClass().add("old-post");
-        }
+        engine.loadContent(ForumViewHtmlGenerator.compose(moduleName, threadNodes));
+        engine.setJavaScriptEnabled(true);
+        contentVbox.getChildren().add(forumViewer);
+//        contentVbox.getChildren().clear();
+//        Label module = getModuleNameBox(moduleName);
+//        module.getStyleClass().add("title-row");
+//        String headerTitle = forumThread.getHeaderTitle();
+//        String postId = forumThread.getPostId();
+//        List<ThreadNode> threadNodes = getThreadNodes(forumThread);
+//        Collections.sort(threadNodes, Comparator.comparing(ThreadNode::getPostDate));
+//        Label headerTitleLabel = new Label("Heading: " + headerTitle);
+//        headerTitleLabel.getStyleClass().add("header-title");
+//        contentVbox.getChildren().addAll(module, headerTitleLabel);
+//        for (ThreadNode threadNode : threadNodes) {
+//            String posterName = forumThread.getPosterName();
+//            String posterEmail = forumThread.getPosterEmail();
+//            String postTitle = "Title: " + forumThread.getPostTitle();
+//            String postBody = forumThread.getPostBody();
+//            String postDate = formattedDate;
+//
+//            VBox post = new VBox();
+//
+//            VBox posterBox = new VBox();
+//            Label posterNameLabel = new Label(posterName);
+//            posterNameLabel.getStyleClass().add("poster-box");
+//            Label posterEmailLabel = new Label(posterEmail);
+//            posterEmailLabel.getStyleClass().add("poster-box");
+//            Label posterTitleLabel = new Label(postTitle);
+//            posterTitleLabel.getStyleClass().add("poster-box");
+//            posterBox.getChildren().addAll(posterNameLabel, posterEmailLabel, posterTitleLabel);
+//            posterBox.getStyleClass().add("poster-box-wrapper");
+//
+//            VBox postBodyBox = new VBox();
+//            WebView postBodyLabel = new WebView();
+//            WebEngine engine = postBodyLabel.getEngine();
+//            AtomicBoolean hasChanged = new AtomicBoolean(false);
+//            engine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
+//                if( newValue != Worker.State.SUCCEEDED || !hasChanged.get()) {
+//                    return;
+//                }
+//                double height = Double.parseDouble(engine.executeScript("document.getElementById('text-body')" +
+//                        ".clientHeight").toString());
+//                if (height > 0) {
+//                    hasChanged.set(true);
+//                    postBodyLabel.setMinHeight(height);
+//                }
+//            });
+//            engine.loadContent("<body style='background-color: white; font-family: Verdana'><div id='text-body'>" +
+//                    postBody + "</div></body>");
+////            postBodyLabel.setMinHeight(getHeight(postBody));
+//            postBodyLabel.setMinWidth(400);
+//            postBodyLabel.setBlendMode(BlendMode.MULTIPLY);
+//
+////            VBox postBodyLabel = createBodyBox(postBody);
+////            postBodyLabel.getStyleClass().add("post-body");
+//            Label postDateLabel = new Label(postDate);
+//            postBodyBox.getChildren().addAll(postBodyLabel, postDateLabel);
+//            postBodyBox.getStyleClass().add("post-body-box");
+//
+//            post.getChildren().addAll(posterBox, postBodyBox);
+//            post.getStyleClass().add("post");
+//            contentVbox.getChildren().addAll(post);
+//            if (threadNode.getPostId().equals(postId)) {
+//                postBodyBox.getStyleClass().add("new-post");
+//                break;
+//            }
+//            postBodyBox.getStyleClass().add("old-post");
+//        }
         contentVbox.heightProperty().addListener((ChangeListener) (observable, oldvalue, newValue) ->
                 contentScrollPane.setVvalue((Double)newValue));
     }
@@ -653,6 +720,16 @@ public class IvleView {
         return bodyBox;
     }
 
+    private double getHeight(String postBody) {
+        VBox bodyBox = new VBox();
+        String[] lines = postBody.split("\r\n");
+        double height = 0;
+        for (String line : lines) {
+            height += 21 * (1 + line.length()/62);
+        }
+        return height;
+    }
+
     private void redirect(WebEngine engine, Worker.State newValue) {
         if (newValue != Worker.State.SUCCEEDED) return;
         String url = engine.getLocation();
@@ -683,6 +760,11 @@ public class IvleView {
         private String timeStamp;
         private String actualTimeStamp;
         private String moduleName;
+        private HBox favourite = new HBox();
+
+        public HBox getFavourite() {
+            return favourite;
+        }
 
         public FileTag(NotificationItem notificationItem) {
             this.notificationItem = notificationItem;
@@ -693,6 +775,11 @@ public class IvleView {
         }
 
         public FileTag invoke(boolean isTime) {
+            ImageView imageView = new ImageView();
+            imageView.setImage(new Image("star.png"));
+            imageView.setVisible(false);
+            favourite.getChildren().add(imageView);
+            favourite.getStyleClass().add("fav-button");
             if (notificationItem instanceof File) {
                 File file = (File) notificationItem;
                 String moduleId = file.getModuleId();
@@ -722,14 +809,14 @@ public class IvleView {
                 fileDes.getChildren().addAll(fileDate, fileOwner, fileSize);
                 fileDes.getStyleClass().add("file-details-holder");
                 fileTag.getChildren().addAll(fileName, fileDes);
-                Pane favourite = new Pane();
-                favourite.getStyleClass().add("fav-button");
                 file.setDisplayed(true);
                 fileRow.getChildren().addAll(favourite, fileTag);
                 fileRow.setOnMouseClicked(event -> {
                     fillFileInContent(moduleName, file.getFileName(), file.getDirectory(), size,
                             file.getFileDescription(), _formattedDate, file.getOwner(), file.getFileRemarks());
-                    event.consume();
+                    if (previous != null) previous.getStyleClass().remove("selected-item");
+                    fileRow.getStyleClass().add("selected-item");
+                    previous = fileRow;
                 });
             } else if (notificationItem instanceof Announcement) {
                 Announcement announcement = (Announcement) notificationItem;
@@ -757,14 +844,14 @@ public class IvleView {
                 hBox.getChildren().addAll(createDateLabel, creatorName);
                 hBox.getStyleClass().add("noti-details-holder");
                 vBox.getChildren().addAll(title, hBox);
-                Pane favourite = new Pane();
-                favourite.getStyleClass().add("fav-button");
                 announcement.setDisplayed(true);
                 fileRow.getChildren().addAll(favourite, vBox);
                 fileRow.setOnMouseClicked(event -> {
                     fillNotiInContent(moduleName, announcement.getTitle(), announcement.getDescription(), _formattedDate,
                             announcement.getCreatorName());
-                    event.consume();
+                    if (previous != null) previous.getStyleClass().remove("selected-item");
+                    fileRow.getStyleClass().add("selected-item");
+                    previous = fileRow;
                 });
             } else {
                 ThreadNode forumThread = (ThreadNode) notificationItem;
@@ -793,16 +880,64 @@ public class IvleView {
                 hBox.getChildren().addAll(createDateLabel, creatorName);
                 hBox.getStyleClass().add("forum-details-holder");
                 vBox.getChildren().addAll(title, hBox);
-                Pane favourite = new Pane();
-                favourite.getStyleClass().add("fav-button");
                 forumThread.setDisplayed(true);
                 fileRow.getChildren().addAll(favourite, vBox);
                 fileRow.setOnMouseClicked(event -> {
-                    fillThreadNodeContent(moduleName, forumThread, _formattedDate);
-                    event.consume();
+                    fillThreadNodeContent(moduleName, forumThread);
+                    if (previous != null) previous.getStyleClass().remove("selected-item");
+                    fileRow.getStyleClass().add("selected-item");
+                    previous = fileRow;
                 });
             }
+            fileRow.setMinWidth(600);
+            favourite.setOnMouseClicked(event -> {
+                imageView.setVisible(!imageView.isVisible());
+                ObservableList<javafx.scene.Node> children = favScrollContent.getChildren();
+                if (imageView.isVisible()) {
+                    fileRow.getStyleClass().add("fav-item");
+                    FileTag fileTag = new FileTag(notificationItem);
+                    HBox _fileRow = fileTag.invoke(true).getFileRow();
+                    _fileRow.getStyleClass().add("item-tag");
+                    fileTag.getFavourite().setVisible(true);
+                    favItemMap.put(notificationItem, _fileRow);
+                    ((HBox) _fileRow.getChildren().get(0)).getChildren().get(0).setVisible(true);
+                    children.add(_fileRow);
+                    children.sort((o1, o2) -> {
+                        String o1Text = ((Label) ((HBox) ((VBox) ((HBox) o1).getChildren().get(1)).getChildren().get(1))
+                                .getChildren().get(0)).getText();
+                        String o2Text = ((Label) ((HBox) ((VBox) ((HBox) o2).getChildren().get(1)).getChildren().get(1))
+                                .getChildren().get(0)).getText();
+                        return o1Text.compareTo(o2Text);
+                    });
+                    HBox timeItem = timeItemMap.get(notificationItem);
+                    HBox modItem = moduleItemMap.get(notificationItem);
+                    setFav(timeItem);
+                    setFav(modItem);
+                }
+                else {
+                    fileRow.getStyleClass().remove("fav-item");
+                    HBox _fileRow = favItemMap.get(notificationItem);
+                    children.remove(_fileRow);
+                    HBox timeItem = timeItemMap.get(notificationItem);
+                    HBox modItem = moduleItemMap.get(notificationItem);
+                    unsetFav(timeItem);
+                    unsetFav(modItem);
+                }
+                event.consume();
+            });
             return this;
+        }
+
+        private void setFav(HBox targetItem) {
+            ObservableList<String> styleClass = targetItem.getStyleClass();
+            if (!styleClass.contains("fav-item")) styleClass.add("fav-item");
+            ((HBox) targetItem.getChildren().get(0)).getChildren().get(0).setVisible(true);
+        }
+
+        private void unsetFav(HBox targetItem) {
+            ObservableList<String> styleClass = targetItem.getStyleClass();
+            if (styleClass.contains("fav-item")) styleClass.remove("fav-item");
+            ((HBox) targetItem.getChildren().get(0)).getChildren().get(0).setVisible(false);
         }
 
         public String getTimeStamp() {

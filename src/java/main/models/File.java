@@ -1,5 +1,7 @@
 package main.models;
 
+import java.util.Objects;
+
 public class File implements NotificationItem{
     private String workbinId;
     private String moduleId;
@@ -120,5 +122,15 @@ public class File implements NotificationItem{
 
     public void setDisplayed(boolean displayed) {
         isDisplayed = displayed;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.getId().equals(((File) obj).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.getId());
     }
 }

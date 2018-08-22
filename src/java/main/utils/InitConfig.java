@@ -1,6 +1,7 @@
 package main.utils;
 
 import main.io.AuthFile;
+import main.io.FavFile;
 
 public class InitConfig {
     private String apiKey = "GdHCDEBG1u5Y0MNwxpedW";
@@ -9,6 +10,7 @@ public class InitConfig {
     public InitConfig() {
         exists = AuthFile.createDirectory();
         exists = exists && AuthFile.createFile();
+        FavFile.createFile();
         if (exists) return;
         AuthFile.updateFile(apiKey, authToken, "");
     }

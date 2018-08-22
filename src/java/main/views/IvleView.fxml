@@ -15,7 +15,7 @@
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <right>
-            <VBox prefHeight="600.0" prefWidth="700.0" styleClass="background-pane" BorderPane.alignment="CENTER">
+            <VBox fx:id="rightVbox" prefHeight="600.0" prefWidth="700.0" styleClass="background-pane" BorderPane.alignment="CENTER">
                <children>
                   <HBox alignment="CENTER" prefHeight="80.0" prefWidth="200.0" styleClass="background-pane">
                      <children>
@@ -58,7 +58,7 @@
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <ScrollPane prefHeight="563.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <ScrollPane fx:id="favScrollPane" prefHeight="563.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                      </content>

@@ -15,7 +15,7 @@
 }
 
 .item-tag:hover {
-    /*-fx-background-color: #F8B195;*/
+    -fx-background-color: rgba(179,210,224, .5);
 }
 
 .file-name {
@@ -29,7 +29,8 @@
 }
 
 .fav-button {
-    -fx-pref-width: 40px;
+    -fx-alignment: center;
+    -fx-pref-width: 50px;
     -fx-pref-height: 40px;
 }
 
@@ -123,7 +124,6 @@
     -fx-wrap-text: true;
     -fx-font-size: 15px;
     -fx-padding: 10px;
-    -fx-max-height: 500px;
 }
 
 .post-body-box {
@@ -164,4 +164,25 @@
 
 .header-title {
     -fx-font-size: 17px;
+}
+
+.hyperlink-style {
+    -fx-text-fill: #4262f4;
+}
+
+.hyperlink-style:hover {
+    -fx-cursor: hand;
+}
+
+.title-value {
+    -fx-font-weight: bold;
+    -fx-font-size: 17;
+}
+
+.fav-item {
+    -fx-background-color: rgba(108,91,123, .5);
+}
+
+.selected-item {
+    -fx-background-color: rgba(179,205,224, .9);
 }
