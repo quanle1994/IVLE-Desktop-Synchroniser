@@ -1,5 +1,7 @@
 package main.models;
 
+import java.util.Objects;
+
 public class Announcement implements NotificationItem{
     private String moduleId;
     private String id;
@@ -75,5 +77,15 @@ public class Announcement implements NotificationItem{
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.getId().equals(((Announcement) obj).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.id);
     }
 }
