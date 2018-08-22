@@ -40,6 +40,16 @@ public class FavFile {
         return "";
     }
 
+    public static boolean hasNext() {
+        try {
+            if (sc == null) refreshScanner();
+            return sc.hasNext();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public static void refreshScanner() {
         try {
             sc = new Scanner(favFile);

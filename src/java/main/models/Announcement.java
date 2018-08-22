@@ -71,6 +71,7 @@ public class Announcement implements NotificationItem{
         this.moduleId = moduleId;
     }
 
+    @Override
     public String getId() {
         return id;
     }

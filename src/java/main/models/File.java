@@ -19,6 +19,7 @@ public class File implements NotificationItem{
 
     public File() {}
 
+    @Override
     public String getId() {
         return id;
     }

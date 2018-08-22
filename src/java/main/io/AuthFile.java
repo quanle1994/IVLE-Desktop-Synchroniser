@@ -13,7 +13,7 @@ public class AuthFile {
 
     public static boolean createDirectory(){
         boolean result = authPath.exists();
-        if (!result) authPath.mkdir();
+        if (!result) authPath.mkdirs();
         return result;
     }
     public static boolean createFile(){

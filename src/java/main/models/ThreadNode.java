@@ -121,6 +121,11 @@ public class ThreadNode implements NotificationItem{
         return Objects.hashCode(this.getPostId());
     }
 
+    @Override
+    public String getId() {
+        return this.postId;
+    }
+
     public String getParentNodeId() {
         return parentNodeId;
     }

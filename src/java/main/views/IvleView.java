@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -20,6 +21,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import main.controllers.Controller;
 import main.controllers.IvleDownloader;
+import main.io.FavFile;
 import main.models.*;
 import main.models.Module;
 import main.utils.Cache;
@@ -50,8 +52,8 @@ public class IvleView {
     public ScrollPane timeScrollPane;
     public ScrollPane moduleScrollPane;
     public ScrollPane favScrollPane;
-    public VBox contentVbox;
     public ScrollPane contentScrollPane;
+    public VBox contentVbox;
     public VBox rightVbox;
     private Controller controller = Controller.getInstance();
     private HBox previous = null;
@@ -61,6 +63,7 @@ public class IvleView {
     private Map<NotificationItem, HBox> timeItemMap = new HashMap<>();
     private Map<NotificationItem, HBox> moduleItemMap = new HashMap<>();
     private Map<NotificationItem, HBox> favItemMap = new HashMap<>();
+    private Map<String, Boolean> favedItemMap = new HashMap<>();
     private Map<String, Module> modules = new HashMap<>();
     private Map<String, Workbin> workbins = new HashMap<>();
     private Map<String, File> files = new HashMap<>();
@@ -95,9 +98,11 @@ public class IvleView {
             Task task = new Task<Void>() {
                 @Override
                 public Void call() throws Exception {
+                    readFavedItemsFromFile();
                     while (true) {
                         Platform.runLater(() -> {
                             createNotiItems();
+                            setFavItems();
                             moduleScrollPane.setContent(moduleScrollContent);
                             timeScrollPane.setContent(timeScrollContent);
                             favScrollPane.setContent(favScrollContent);
@@ -210,6 +215,25 @@ public class IvleView {
             if (!notificationItem.isDisplayed()) return true;
         }
         return false;
+    }
+
+    private void readFavedItemsFromFile() {
+        while (FavFile.hasNext()) {
+            String notificationItemId = FavFile.nextLine();
+            favedItemMap.put(notificationItemId, false);
+        }
+    }
+
+    private void setFavItems() {
+        for (String notificationItemId : favedItemMap.keySet()) {
+            boolean isSet = favedItemMap.get(notificationItemId);
+            if (isSet)  continue;
+            NotificationItem notificationItem = notificationItemMap.get(notificationItemId);
+            if (notificationItem == null) continue;
+            HBox fileRow = timeItemMap.get(notificationItem);
+            selectFavItem((ImageView) ((HBox) fileRow.getChildren().get(0)).getChildren().get(0), fileRow, notificationItem);
+            favedItemMap.put(notificationItemId, true);
+        }
     }
 
     private synchronized void createNotiItems() {
@@ -754,6 +778,60 @@ public class IvleView {
         }
     }
 
+    private void selectFavItem(ImageView imageView, HBox fileRow, NotificationItem notificationItem) {
+        imageView.setVisible(!imageView.isVisible());
+        ObservableList<javafx.scene.Node> children = favScrollContent.getChildren();
+        ObservableList<javafx.scene.Node> childrenDup = FXCollections.observableArrayList(children);
+        if (imageView.isVisible()) {
+            fileRow.getStyleClass().add("fav-item");
+            FileTag fileTag = new FileTag(notificationItem);
+            HBox _fileRow = fileTag.invoke(true).getFileRow();
+            _fileRow.getStyleClass().add("item-tag");
+            fileTag.getFavourite().setVisible(true);
+            favItemMap.put(notificationItem, _fileRow);
+            ((HBox) _fileRow.getChildren().get(0)).getChildren().get(0).setVisible(true);
+            childrenDup.add(_fileRow);
+            childrenDup.sort((o1, o2) -> {
+                String o1Text = ((Label) ((HBox) ((VBox) ((HBox) o1).getChildren().get(1)).getChildren().get(1))
+                        .getChildren().get(0)).getText().split(" ", 2)[1];
+                String o2Text = ((Label) ((HBox) ((VBox) ((HBox) o2).getChildren().get(1)).getChildren().get(1))
+                        .getChildren().get(0)).getText().split(" ", 2)[1];
+                return o2Text.compareTo(o1Text);
+            });
+            children.clear();
+            children.addAll(childrenDup);
+            HBox timeItem = timeItemMap.get(notificationItem);
+            HBox modItem = moduleItemMap.get(notificationItem);
+            favedItemMap.put(notificationItem.getId(), true);
+            FavFile.updateFile(new ArrayList<>(favedItemMap.keySet()));
+            setFav(timeItem);
+            setFav(modItem);
+        }
+        else {
+            fileRow.getStyleClass().remove("fav-item");
+            HBox _fileRow = favItemMap.get(notificationItem);
+            children.remove(_fileRow);
+            HBox timeItem = timeItemMap.get(notificationItem);
+            HBox modItem = moduleItemMap.get(notificationItem);
+            favedItemMap.remove(notificationItem.getId());
+            FavFile.updateFile(new ArrayList<>(favedItemMap.keySet()));
+            unsetFav(timeItem);
+            unsetFav(modItem);
+        }
+    }
+
+    private void setFav(HBox targetItem) {
+        ObservableList<String> styleClass = targetItem.getStyleClass();
+        if (!styleClass.contains("fav-item")) styleClass.add("fav-item");
+        ((HBox) targetItem.getChildren().get(0)).getChildren().get(0).setVisible(true);
+    }
+
+    private void unsetFav(HBox targetItem) {
+        ObservableList<String> styleClass = targetItem.getStyleClass();
+        if (styleClass.contains("fav-item")) styleClass.remove("fav-item");
+        ((HBox) targetItem.getChildren().get(0)).getChildren().get(0).setVisible(false);
+    }
+
     private class FileTag {
         private NotificationItem notificationItem;
         private HBox fileRow = new HBox();
@@ -891,53 +969,10 @@ public class IvleView {
             }
             fileRow.setMinWidth(600);
             favourite.setOnMouseClicked(event -> {
-                imageView.setVisible(!imageView.isVisible());
-                ObservableList<javafx.scene.Node> children = favScrollContent.getChildren();
-                if (imageView.isVisible()) {
-                    fileRow.getStyleClass().add("fav-item");
-                    FileTag fileTag = new FileTag(notificationItem);
-                    HBox _fileRow = fileTag.invoke(true).getFileRow();
-                    _fileRow.getStyleClass().add("item-tag");
-                    fileTag.getFavourite().setVisible(true);
-                    favItemMap.put(notificationItem, _fileRow);
-                    ((HBox) _fileRow.getChildren().get(0)).getChildren().get(0).setVisible(true);
-                    children.add(_fileRow);
-                    children.sort((o1, o2) -> {
-                        String o1Text = ((Label) ((HBox) ((VBox) ((HBox) o1).getChildren().get(1)).getChildren().get(1))
-                                .getChildren().get(0)).getText();
-                        String o2Text = ((Label) ((HBox) ((VBox) ((HBox) o2).getChildren().get(1)).getChildren().get(1))
-                                .getChildren().get(0)).getText();
-                        return o1Text.compareTo(o2Text);
-                    });
-                    HBox timeItem = timeItemMap.get(notificationItem);
-                    HBox modItem = moduleItemMap.get(notificationItem);
-                    setFav(timeItem);
-                    setFav(modItem);
-                }
-                else {
-                    fileRow.getStyleClass().remove("fav-item");
-                    HBox _fileRow = favItemMap.get(notificationItem);
-                    children.remove(_fileRow);
-                    HBox timeItem = timeItemMap.get(notificationItem);
-                    HBox modItem = moduleItemMap.get(notificationItem);
-                    unsetFav(timeItem);
-                    unsetFav(modItem);
-                }
+                selectFavItem(imageView, fileRow, notificationItem);
                 event.consume();
             });
             return this;
-        }
-
-        private void setFav(HBox targetItem) {
-            ObservableList<String> styleClass = targetItem.getStyleClass();
-            if (!styleClass.contains("fav-item")) styleClass.add("fav-item");
-            ((HBox) targetItem.getChildren().get(0)).getChildren().get(0).setVisible(true);
-        }
-
-        private void unsetFav(HBox targetItem) {
-            ObservableList<String> styleClass = targetItem.getStyleClass();
-            if (styleClass.contains("fav-item")) styleClass.remove("fav-item");
-            ((HBox) targetItem.getChildren().get(0)).getChildren().get(0).setVisible(false);
         }
 
         public String getTimeStamp() {
