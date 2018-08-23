@@ -33,11 +33,6 @@ public class ConfigView implements View{
             AuthFile.nextLine();
             rootDirectoryPath= AuthFile.nextLine();
             pathTextfield.setText(rootDirectoryPath);
-            if (rootDirectoryPath.isEmpty()) {
-                File file = new File(System.getenv("APPDATA"));
-                File file2 = new File(System.getenv("APPDATA") + "\\IVLEDesktopSync");
-                pathTextfield.setText(file.getAbsolutePath() + ": " + file2.mkdirs());
-            }
             setConfig(false);
         }
         else proceedButton.setVisible(false);

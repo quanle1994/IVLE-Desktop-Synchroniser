@@ -5,12 +5,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import main.utils.Constants;
 import main.views.View;
 
 public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+        Constants.init();
         FXMLLoader configLoader = new FXMLLoader(getClass().getResource("views/ConfigView.fxml"));
         Parent configView = configLoader.load();
         primaryStage.setTitle("IVLe Sync");

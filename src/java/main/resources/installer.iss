@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "NUS IVLe Desktop Synchroniser"
-#define MyAppVersion "1.3"
+#define MyAppVersion "1.4"
 #define MyAppPublisher "Quan Le, Inc."
 #define MyAppURL "https://github.com/quanle1994/IVLE-Desktop-Synchroniser"
 #define MyAppExeName "IVLeDesktopSync.exe"
@@ -21,7 +21,7 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\IVLeDesktopSync
 DisableProgramGroupPage=yes
-OutputDir=E:\School\SummerProjects\IVLE-Desktop-Synchroniser\out\artifacts\IVLESync_jar
+OutputDir=E:\School\SummerProjects\IVLE-Desktop-Synchroniser\out\artifacts\IVLESync_jar\windowsInstaller
 OutputBaseFilename=IVLeDesktopSyncSetup
 SetupIconFile=E:\School\SummerProjects\IVLE-Desktop-Synchroniser\src\java\main\resources\address_book_32.ico
 Compression=lzma
@@ -35,8 +35,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "E:\School\SummerProjects\IVLE-Desktop-Synchroniser\out\artifacts\IVLESync_jar\windowsInstaller\IVLeDesktopSync.exe"; DestDir: "{app}"
-Source: "E:\School\SummerProjects\IVLE-Desktop-Synchroniser\out\artifacts\IVLESync_jar\windowsInstaller\JRE\*"; DestDir: "{app}\JRE"; Flags: recursesubdirs createallsubdirs
-
+Source: "E:\School\SummerProjects\IVLE-Desktop-Synchroniser\out\artifacts\IVLESync_jar\JRE\*"; DestDir: "{app}\JRE"; Flags: recursesubdirs createallsubdirs
+Source: "E:\School\SummerProjects\IVLE-Desktop-Synchroniser\out\artifacts\IVLESync_jar\IVLeSync\*"; DestDir: "{app}\IVLeSync"; Flags: recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"

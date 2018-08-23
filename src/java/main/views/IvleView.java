@@ -534,8 +534,8 @@ public class IvleView {
         directory.getStyleClass().add("hyperlink-style");
         directory.setOnMouseClicked(event -> {
             try {
-                String command = "explorer.exe /select," + file.toURI();
-                System.out.println(command);
+                String command = (System.getProperty("os.name").toLowerCase().contains("mac")) ?
+                        "open " + file.getParentFile().toURI() : "explorer.exe /select," + file.toURI();
                 Runtime.getRuntime().exec(command);
             } catch (Exception e) {
                 e.printStackTrace();
