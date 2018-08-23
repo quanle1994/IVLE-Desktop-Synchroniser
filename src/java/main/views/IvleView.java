@@ -79,6 +79,9 @@ public class IvleView {
     private VBox favScrollContent = new VBox();
 
     public void initialize() {
+        contentScrollPane.prefHeightProperty().bind(rightVbox.heightProperty().subtract(80));
+        contentVbox.prefWidthProperty().bind(rightVbox.widthProperty().subtract(24));
+        contentVbox.prefHeightProperty().bind(contentScrollPane.heightProperty().subtract(21));
         timeScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         moduleScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         favScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);

@@ -64,7 +64,7 @@
 
 .background-pane {
     -fx-background-image: url("summer.jpg");
-    -fx-background-size: 700px 600px;
+    -fx-background-size: cover;
 }
 
 .title-label {
@@ -86,7 +86,7 @@
 
 .row-wrapper {
     -fx-alignment: top-center ;
-    -fx-padding: 0px 0px 5px 0px;
+    -fx-padding: 0px 10px 5px 10px;
     -fx-border-insets: 0px 0px 5px 0px;
     -fx-background-insets: 0px 0px 5px 0px;
 }
@@ -101,6 +101,7 @@
     -fx-font-size: 15px;
     -fx-pref-width: 100px;
     -fx-font-weight: bold;
+    -fx-min-width: 120px;
 }
 
 .html-content {
@@ -115,7 +116,7 @@
     -fx-wrap-text: true;
     -fx-font-size: 18px;
     -fx-font-weight: bold;
-    -fx-padding: 0px 0px 10px 0px;
+    -fx-padding: 0px 10px 10px 10px;
     -fx-border-insets: 0px 0px 10px 0px;
     -fx-background-insets: 0px 0px 10px 0px;
 }

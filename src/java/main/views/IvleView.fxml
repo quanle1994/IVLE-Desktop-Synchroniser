@@ -3,38 +3,19 @@
 <?import com.jfoenix.controls.JFXTabPane?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1300.0" stylesheets="@../resources/stylesheet.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.views.IvleView">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="1000.0" prefHeight="600.0" prefWidth="1000.0" stylesheets="@../resources/stylesheet.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.views.IvleView">
    <children>
-      <BorderPane prefHeight="200.0" prefWidth="200.0">
-         <right>
-            <VBox fx:id="rightVbox" prefHeight="600.0" prefWidth="700.0" styleClass="background-pane" BorderPane.alignment="CENTER">
-               <children>
-                  <HBox alignment="CENTER" prefHeight="80.0" prefWidth="200.0" styleClass="background-pane">
-                     <children>
-                        <Label styleClass="title-label" text="NUS IVLE DESKTOP SYNCHRONISER">
-                           <font>
-                              <Font name="System Bold" size="25.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </HBox>
-                  <ScrollPane fx:id="contentScrollPane" prefHeight="520.0" prefWidth="200.0" styleClass="content-pane">
-                     <content>
-                        <VBox fx:id="contentVbox" alignment="CENTER" prefHeight="500.0" prefWidth="680.0" />
-                     </content></ScrollPane>
-               </children>
-            </VBox>
-         </right>
-         <left>
-            <JFXTabPane prefWidth="600.0" BorderPane.alignment="CENTER">
+      <SplitPane dividerPositions="0.4">
+         <items>
+            <JFXTabPane minHeight="500.0" minWidth="450.0">
                <tabs>
                   <Tab text="Time">
                      <content>
@@ -65,6 +46,24 @@
                   </Tab>
                </tabs>
             </JFXTabPane>
-         </left></BorderPane>
+            <VBox fx:id="rightVbox" minHeight="500.0" minWidth="580.0" styleClass="background-pane">
+               <children>
+                  <HBox alignment="CENTER" prefHeight="80.0" styleClass="background-pane">
+                     <children>
+                        <Label styleClass="title-label" text="NUS IVLE DESKTOP SYNCHRONISER">
+                           <font>
+                              <Font name="System Bold" size="25.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <ScrollPane fx:id="contentScrollPane" prefHeight="520.0" styleClass="content-pane">
+                     <content>
+                        <VBox fx:id="contentVbox" alignment="CENTER" minWidth="476.0" prefHeight="499.0" />
+                     </content></ScrollPane>
+               </children>
+            </VBox>
+         </items>
+      </SplitPane>
    </children>
 </StackPane>
