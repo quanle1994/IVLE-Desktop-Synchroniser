@@ -110,7 +110,7 @@ public class IvleView {
                             timeScrollPane.setContent(timeScrollContent);
                             favScrollPane.setContent(favScrollContent);
                         });
-                        Thread.sleep(1000);
+                        Thread.sleep(5000);
                     }
                 }
             };
@@ -144,56 +144,57 @@ public class IvleView {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Thread backgroundService = new Thread(() -> {
-            while (true) {
-                Thread ivleThread = new Thread(() -> {
-                    retrieveWorkbinContents();
-                    proceed.add("Start IVLE Thread");
-                    if (proceed.size() == THREAD_NUMBER) {
-                        downloadFiles();
-                    }
-                });
-                ivleThread.setDaemon(true);
-                Thread desktopThread = new Thread(() -> {
-                    retrieveDesktopConents(controller.getSyncRootDirectory());
-                    proceed.add("Start Desktop Thread");
-                    if (proceed.size() == THREAD_NUMBER) {
-                        downloadFiles();
-                    }
-                });
-                desktopThread.setDaemon(true);
-                Thread announcementThread = new Thread(() -> {
-                    retrieveAnnouncements();
-                    proceed.add("Start Announcement Thread");
-                    if (proceed.size() == THREAD_NUMBER) {
-                        downloadFiles();
-                    }
-                });
-                announcementThread.setDaemon(true);
-                Thread forumThread = new Thread(() -> {
-                    retrieveForumThreads();
-                    proceed.add("Start Forum Thread");
-                    if (proceed.size() == THREAD_NUMBER) {
-                        downloadFiles();
-                    }
-                });
-                forumThread.setDaemon(true);
-                if (proceed.size() == 0) {
-                    proceed.add("Start Background");
-                    ivleThread.start();
-                    desktopThread.start();
-                    announcementThread.start();
-                    forumThread.start();
-                }
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        backgroundService.setDaemon(true);
-        backgroundService.start();
+//        Thread backgroundService = new Thread(() -> {
+////            while (true) {
+////                Thread ivleThread = new Thread(() -> {
+////                    retrieveWorkbinContents();
+////                    proceed.add("Start IVLE Thread");
+////                    if (proceed.size() == THREAD_NUMBER) {
+////                        downloadFiles();
+////                    }
+////                });
+////                ivleThread.setDaemon(true);
+////                Thread desktopThread = new Thread(() -> {
+////                    existingFilePaths = new TreeSet<>();
+////                    retrieveDesktopConents(controller.getSyncRootDirectory());
+////                    proceed.add("Start Desktop Thread");
+////                    if (proceed.size() == THREAD_NUMBER) {
+////                        downloadFiles();
+////                    }
+////                });
+////                desktopThread.setDaemon(true);
+////                Thread announcementThread = new Thread(() -> {
+////                    retrieveAnnouncements();
+////                    proceed.add("Start Announcement Thread");
+////                    if (proceed.size() == THREAD_NUMBER) {
+////                        downloadFiles();
+////                    }
+////                });
+////                announcementThread.setDaemon(true);
+////                Thread forumThread = new Thread(() -> {
+////                    retrieveForumThreads();
+////                    proceed.add("Start Forum Thread");
+////                    if (proceed.size() == THREAD_NUMBER) {
+////                        downloadFiles();
+////                    }
+////                });
+////                forumThread.setDaemon(true);
+////                if (proceed.size() == 0) {
+////                    proceed.add("Start Background");
+////                    ivleThread.start();
+////                    desktopThread.start();
+////                    announcementThread.start();
+////                    forumThread.start();
+////                }
+////                try {
+////                    Thread.sleep(5000);
+////                } catch (InterruptedException e) {
+////                    e.printStackTrace();
+////                }
+////            }
+////        });
+////        backgroundService.setDaemon(true);
+////        backgroundService.start();
     }
 
     private synchronized void downloadFiles() {
@@ -450,27 +451,23 @@ public class IvleView {
         for (Object thread : threads) {
             Map<String, Object> subThreadNodeMap = (Map<String,Object>) thread;
             String id = subThreadNodeMap.get("ID").toString();
-            if (threadNodeHashMap.get(id) != null) continue;
-//            String postBody = convertToPlainText(subThreadNodeMap.get("PostBody").toString());
             String postBody = subThreadNodeMap.get("PostBody").toString();
             String postDate = subThreadNodeMap.get("PostDate_js").toString();
             String postTitle = subThreadNodeMap.get("PostTitle").toString();
             Map<String, Object> poster = (Map<String, Object>) subThreadNodeMap.get("Poster");
             String posterName = poster.get("Name").toString();
             String posterEmail = poster.get("Email").toString();
-            ThreadNode threadNode = new ThreadNode(moduleId, headerId, headerTitle, id, postTitle, postDate,
+            ThreadNode threadNode;
+            if (threadNodeHashMap.get(id) == null)
+                threadNode = new ThreadNode(moduleId, headerId, headerTitle, id, postTitle, postDate,
                     postBody, posterName, posterEmail, parentNodeId, false);
+            else threadNode = new ThreadNode(moduleId, headerId, headerTitle, id, postTitle, postDate,
+                    postBody, posterName, posterEmail, parentNodeId, true);
             threadNodeHashMap.put(id, threadNode);
             notificationItemMap.put(id, threadNode);
             List<Object> subThreads = (ArrayList<Object>) subThreadNodeMap.get("Threads");
             traverseForumThread(moduleId, headerId, headerTitle, subThreads, id);
         }
-    }
-
-    private String convertToPlainText(String richText) {
-        return richText.replace("&nbsp;", " ").replace("<br>", "")
-                .replace("&#39;", "'").replace("&gt;", ">")
-                .replace("&quot;", "\"");
     }
 
     private void traverseDirectory(Workbin workbin, String directory, ArrayList<Object> folders) {
