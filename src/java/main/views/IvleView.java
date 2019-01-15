@@ -2,14 +2,12 @@ package main.views;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
-import javafx.concurrent.WorkerStateEvent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
@@ -23,7 +21,6 @@ import main.controllers.Controller;
 import main.controllers.IvleDownloader;
 import main.io.FavFile;
 import main.models.*;
-import main.models.Module;
 import main.utils.Cache;
 import main.utils.ForumViewHtmlGenerator;
 import main.utils.Workbin;
@@ -96,29 +93,29 @@ public class IvleView {
                 };
             }
         };
-        ser.setOnSucceeded((WorkerStateEvent event) -> {
-            retrieveModules();
-            Task task = new Task<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    readFavedItemsFromFile();
-                    while (true) {
-                        Platform.runLater(() -> {
-                            createNotiItems();
-                            setFavItems();
-                            moduleScrollPane.setContent(moduleScrollContent);
-                            timeScrollPane.setContent(timeScrollContent);
-                            favScrollPane.setContent(favScrollContent);
-                        });
-                        Thread.sleep(5000);
-                    }
-                }
-            };
-            Thread th = new Thread(task);
-            th.setDaemon(true);
-            th.start();
-        });
-        ser.start();
+//        ser.setOnSucceeded((WorkerStateEvent event) -> {
+//            retrieveModules();
+//            Task task = new Task<Void>() {
+//                @Override
+//                public Void call() throws Exception {
+//                    readFavedItemsFromFile();
+//                    while (true) {
+//                        Platform.runLater(() -> {
+//                            createNotiItems();
+//                            setFavItems();
+//                            moduleScrollPane.setContent(moduleScrollContent);
+//                            timeScrollPane.setContent(timeScrollContent);
+//                            favScrollPane.setContent(favScrollContent);
+//                        });
+//                        Thread.sleep(5000);
+//                    }
+//                }
+//            };
+//            Thread th = new Thread(task);
+//            th.setDaemon(true);
+//            th.start();
+//        });
+//        ser.start();
     }
 
     public synchronized void retrieveModules() {
