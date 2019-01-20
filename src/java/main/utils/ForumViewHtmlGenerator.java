@@ -14,8 +14,8 @@ public class ForumViewHtmlGenerator {
     private static final String style = "<style>\n" +
             "    #page-wrapper {\n" +
             "        padding: 10px 10px;\n" +
-            "        font-size: 13px;\n" +
-            "        overflow-y: scroll;\n" +
+            "        font-size: 15px;\n" +
+            "        overflow-y: auto;\n" +
             "        width: 100%;\n" +
             "        height: 100%;\n" +
             "        border-radius: 5px;\n" +
@@ -28,12 +28,12 @@ public class ForumViewHtmlGenerator {
             "    }\n" +
             "\n" +
             "    #module-name {\n" +
-            "        font-size: 20px;\n" +
+            "        font-size: 23px;\n" +
             "        font-weight: bold;\n" +
             "    }\n" +
             "\n" +
             "    #forum-header {\n" +
-            "        font-size: 17px;\n" +
+            "        font-size: 20px;\n" +
             "    }\n" +
             "\n" +
             "    .reply-template {\n" +

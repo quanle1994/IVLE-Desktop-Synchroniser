@@ -12,6 +12,7 @@ public class File implements NotificationItem{
     private String fileRemarks;
     private String fileType;
     private String fileContent;
+    private String folderId;
     private String owner;
     private String size;
     private String date;
@@ -133,5 +134,13 @@ public class File implements NotificationItem{
     @Override
     public int hashCode() {
         return Objects.hashCode(this.getId());
+    }
+
+    public String getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(String folderId) {
+        this.folderId = folderId;
     }
 }

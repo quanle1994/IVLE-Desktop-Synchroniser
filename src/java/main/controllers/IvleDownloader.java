@@ -24,7 +24,7 @@ public class IvleDownloader {
         data.put("Duration", "0");
         data.put("IncludeAllInfo", "true");
         String spec = assembleUrl(Constants.BASE_URL + "Modules", data);
-        return sendHttpRequest(spec);
+        return sendHttpGetRequest(spec);
     }
 
     public String downloadWorkbin(String workbinId) {
@@ -33,17 +33,17 @@ public class IvleDownloader {
         data.put("WorkbinID", workbinId);
         data.put("TitleOnly", "false");
         String spec = assembleUrl(Constants.BASE_URL + "Workbins", data);
-        return sendHttpRequest(spec);
+        return sendHttpGetRequest(spec);
     }
 
-    public String downloadAnnouncements(String courseId) {
-        Map<String, String> data = new HashMap<>();
-        data.put("Duration", "0");
-        data.put("CourseID", courseId);
-        data.put("TitleOnly", "false");
-        String spec = assembleUrl(Constants.BASE_URL + "Announcements", data);
-        return sendHttpRequest(spec);
-    }
+//    public String downloadAnnouncements(String courseId) {
+//        Map<String, String> data = new HashMap<>();
+//        data.put("Duration", "0");
+//        data.put("CourseID", courseId);
+//        data.put("TitleOnly", "false");
+//        String spec = assembleUrl(Constants.BASE_URL + "Announcements", data);
+//        return sendHttpGetRequest(spec);
+//    }
 
     public void downloadFile(String fileId, String fileDirectory) {
         Map<String, String> data = new HashMap<>();
@@ -60,7 +60,22 @@ public class IvleDownloader {
         data.put("TitleOnly", "false");
         data.put("IncludeThreads", "true");
         String spec = assembleUrl(Constants.BASE_URL + "Forums", data);
-        return sendHttpRequest(spec);
+        return sendHttpGetRequest(spec);
+    }
+
+    public String downloadLessonPlan(String startDate, String courseId) {
+        Map<String, String> data = new HashMap<>();
+        data.put("CourseID", courseId);
+        data.put("EventDate", startDate);
+        String spec = assembleUrl(Constants.BASE_URL + "LessonPlan_Events", data);
+        return sendHttpGetRequest(spec);
+    }
+
+    public String downloadEReserve(String courseId) {
+        Map<String, String> data = new HashMap<>();
+        data.put("CourseID", courseId);
+        String spec = assembleUrl(Constants.BASE_URL + "LibEreserves", data);
+        return sendHttpGetRequest(spec);
     }
 
     private void saveFile(String spec, String fileDirectory) {
@@ -91,7 +106,7 @@ public class IvleDownloader {
         }
     }
 
-    private String sendHttpRequest(String spec) {
+    private String sendHttpGetRequest(String spec) {
         try {
         URL url = new URL(spec);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();

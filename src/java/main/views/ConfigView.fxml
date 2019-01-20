@@ -5,11 +5,13 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="anchorId" prefHeight="147.0" prefWidth="425.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.views.ConfigView">
-   <children>
-      <Label layoutX="80.0" layoutY="14.0" text="Choose Root Directory For Synching" />
-      <TextField fx:id="pathTextfield" layoutX="64.0" layoutY="38.0" prefHeight="25.0" prefWidth="224.0" />
-      <Button layoutX="325.0" layoutY="38.0" mnemonicParsing="false" onAction="#browseDirectory" text="Browse" />
-      <Button fx:id="proceedButton" layoutX="187.0" layoutY="74.0" mnemonicParsing="false" onAction="#setAuthenticationAttributes" text="Proceed" visible="false" />
-   </children>
+<AnchorPane fx:id="anchorId" prefHeight="147.0" prefWidth="425.0" xmlns="http://javafx.com/javafx/8.0.121"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.views.ConfigView">
+    <children>
+        <Label layoutX="80.0" layoutY="14.0" text="Choose Root Directory For Synching"/>
+        <TextField fx:id="pathTextfield" layoutX="64.0" layoutY="38.0" prefHeight="25.0" prefWidth="224.0"/>
+        <Button layoutX="325.0" layoutY="38.0" mnemonicParsing="false" onAction="#browseDirectory" text="Browse"/>
+        <Button fx:id="proceedButton" layoutX="187.0" layoutY="74.0" mnemonicParsing="false"
+                onAction="#setAuthenticationAttributes" text="Proceed" visible="false"/>
+    </children>
 </AnchorPane>

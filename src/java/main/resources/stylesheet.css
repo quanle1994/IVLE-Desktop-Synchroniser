@@ -6,6 +6,12 @@
     -fx-cursor: hand;
 }
 
+.star-icon {
+    -fx-fill: #FE774D;
+    -fx-padding: 10.0;
+    -fx-cursor: hand;
+}
+
 .item-tag {
     -fx-padding: 5px 0px 10px 0px;
     -fx-font-size: 13px;
@@ -28,10 +34,21 @@
     -fx-padding: 5px;
 }
 
+.dimmed {
+    -fx-text-fill: #9E9E9E;
+    -fx-fill: #9E9E9E;
+}
+
 .fav-button {
     -fx-alignment: center;
     -fx-pref-width: 50px;
     -fx-pref-height: 40px;
+}
+
+.expand-button {
+    -fx-alignment: center;
+    -fx-pref-width: 30px;
+    /*-fx-pref-height: 40px;*/
 }
 
 .file-details-holder > *{
@@ -56,6 +73,24 @@
 .noti-details-holder > *{
     -fx-padding: 5px 20px 5px 5px;
     -fx-background-color: #FF847C;
+    -fx-border-insets: 0px 15px 0px 0px;
+    -fx-background-insets: 0px 15px 0px 0px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.des-details-holder > *{
+    -fx-padding: 5px 20px 5px 5px;
+    -fx-background-color: #FFA726;
+    -fx-border-insets: 0px 15px 0px 0px;
+    -fx-background-insets: 0px 15px 0px 0px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.lessonPlan-details-holder > *{
+    -fx-padding: 5px 20px 5px 5px;
+    -fx-background-color: #BA68C8;
     -fx-border-insets: 0px 15px 0px 0px;
     -fx-background-insets: 0px 15px 0px 0px;
     -fx-border-radius: 5px;
@@ -168,11 +203,23 @@
 }
 
 .hyperlink-style {
-    -fx-text-fill: #4262f4;
-}
+     -fx-text-fill: #0D47A1;
+ }
 
 .hyperlink-style:hover {
     -fx-cursor: hand;
+}
+
+.hyperlink-style-resource {
+    -fx-font-size: 20px;
+    -fx-text-fill: #0D47A1;
+    -fx-min-height: 40;
+    -fx-wrap-text: true;
+}
+
+.hyperlink-style-resource:hover {
+    -fx-cursor: hand;
+    -fx-underline: true;
 }
 
 .title-value {

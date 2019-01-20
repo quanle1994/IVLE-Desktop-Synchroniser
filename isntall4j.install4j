@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="7.0.6" transformSequenceNumber="7">
-  <directoryPresets config="E:/School/SummerProjects/IVLE-Desktop-Synchroniser/out/artifacts/IVLESync_jar/macInstaller" />
-  <application name="IVLE Destop Synchroniser" distributionSourceDir="" applicationId="1629-6731-8376-6896" mediaDir="E:/School/SummerProjects/IVLE-Desktop-Synchroniser/out/artifacts/IVLESync_jar/macInstaller" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="IVLEDestopSynchroniser" publisher="Quan Le, Inc." publisherWeb="https://github.com/quanle1994/IVLE-Desktop-Synchroniser" version="1.4" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="4f72bc89a0aefcd5" javaMinVersion="10.0.2" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
+<install4j version="7.0.9" transformSequenceNumber="7">
+  <directoryPresets config="D:/School/SummerProjects/IVLE-Desktop-Synchroniser/classes/artifacts/IVLESync_jar" />
+  <application name="IVLE Destop Synchroniser" distributionSourceDir="" applicationId="1629-6731-8376-6896" mediaDir="D:/School/SummerProjects/IVLE-Desktop-Synchroniser/classes/artifacts/IVLESync_jar/macInstaller" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="IVLEDestopSynchroniser" publisher="Quan Le, Inc." publisherWeb="https://github.com/quanle1994/IVLE-Desktop-Synchroniser" version="1.4" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="4f72bc89a0aefcd5" javaMinVersion="1.7" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
       <additionalLanguages />
@@ -13,24 +13,27 @@
     </searchSequence>
     <variables />
     <mergedProjects />
-    <codeSigning macEnabled="false" macPkcs12File="" windowsEnabled="false" windowsKeySource="pkcs12" windowsPvkFile="" windowsSpcFile="" windowsPkcs12File="" />
+    <codeSigning macEnabled="false" macPkcs12File="" windowsEnabled="false" windowsKeySource="pkcs12" windowsPvkFile="" windowsSpcFile="" windowsPkcs12File="" windowsPkcs11Library="" windowsPkcs11Slot="">
+      <windowsKeystoreIdentifier issuer="" serial="" subject="" />
+      <windowsPkcs11Identifier issuer="" serial="" subject="" />
+    </codeSigning>
   </application>
   <files keepModificationTimes="false" missingFilesStrategy="warn" globalExcludeSuffixes="" defaultOverwriteMode="4" defaultUninstallMode="0" launcherOverwriteMode="3" defaultFileMode="644" defaultDirMode="755">
     <filesets />
     <roots />
     <mountPoints>
-      <mountPoint id="58" root="" location="" mode="755" />
       <mountPoint id="59" root="" location="IVLeSync" mode="755" />
+      <mountPoint id="58" root="" location="" mode="755" />
     </mountPoints>
     <entries>
-      <fileEntry mountPoint="58" file="E:/School/SummerProjects/IVLE-Desktop-Synchroniser/out/artifacts/IVLESync_jar/IVLESync.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
-      <fileEntry mountPoint="59" file="E:/School/SummerProjects/IVLE-Desktop-Synchroniser/out/artifacts/IVLESync_jar/IVLeSync/summer.jpg" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
+      <fileEntry mountPoint="59" file="D:/School/SummerProjects/IVLE-Desktop-Synchroniser/classes/artifacts/IVLESync_jar/IVLeSync/summer.jpg" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
+      <fileEntry mountPoint="58" file="D:/School/SummerProjects/IVLE-Desktop-Synchroniser/classes/artifacts/IVLESync_jar/IVLESync.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
     </entries>
     <components />
   </files>
   <launchers>
     <launcher name="IVLEDestopSyncSetup" id="61" customizedId="" external="false" excludeFromMenu="false" unixMode="755" unixAutoStart="true" menuName="" icnsFile="" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="" useCustomMacosExecutableName="false" customMacosExecutableName="" useJavaMinVersionOverride="false" javaMinVersionOverride="" useJavaMaxVersionOverride="false" javaMaxVersionOverride="" checkUpdater="false" updateExecutionMode="unattendedProgress" unattendedUpdateTitle="${i18n:updater.WindowTitle(&quot;${compiler:sys.fullName}&quot;)}">
-      <executable name="IVLEDestopSyncSetup" type="1" iconSet="true" iconFile="E:/School/SummerProjects/IVLE-Desktop-Synchroniser/out/artifacts/IVLESync_jar/windowsInstaller/address_book_32.ico" executableDir="" redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" globalSingleInstance="false" singleInstanceActivate="true" dpiAware="java9+">
+      <executable name="IVLEDestopSyncSetup" type="1" iconSet="true" iconFile="D:/School/SummerProjects/IVLE-Desktop-Synchroniser/classes/artifacts/IVLESync_jar/address_book_32.ico" executableDir="" redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" globalSingleInstance="false" singleInstanceActivate="true" dpiAware="java9+">
         <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" productName="" />
       </executable>
       <splashScreen show="false" width="0" height="0" bitmapFile="" textOverlay="false">
@@ -76,6 +79,9 @@
           </java>
         </serializedBean>
         <styleOverrides />
+        <customScript mode="1" file="">
+          <content />
+        </customScript>
         <launcherIds />
         <variables />
         <startup>
@@ -420,6 +426,9 @@ return console.askOkCancel(message, true);
           </java>
         </serializedBean>
         <styleOverrides />
+        <customScript mode="1" file="">
+          <content />
+        </customScript>
         <launcherIds />
         <variables />
         <startup>
@@ -1039,7 +1048,7 @@ return console.askYesNo(message, true);
     </styles>
   </installerGui>
   <mediaSets>
-    <macosArchive name="macOS Single Bundle Archive" id="62" customizedId="" mediaFileName="" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" downloadURL="" includeAllDownloadableComponents="true" includedJRE="macosx-amd64-10.0.2" manualJREEntry="false" archiveType="dmg" volumeName="${compiler:sys.shortName}" launcherId="61">
+    <macosArchive name="macOS Single Bundle Archive" id="62" customizedId="" mediaFileName="" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" downloadURL="" includeAllDownloadableComponents="true" includedJRE="macosx-amd64-1.8.0_202_unpacked" manualJREEntry="false" archiveType="dmg" volumeName="${compiler:sys.shortName}" launcherId="61">
       <excludedComponents />
       <includedDownloadableComponents />
       <excludedBeans />
