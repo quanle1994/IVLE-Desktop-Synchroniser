@@ -19,6 +19,12 @@ public class IvleDownloader {
         return IVLE_DOWNLOADER;
     }
 
+    public String validateToken() {
+        Map<String, String> data = new HashMap<>();
+        String spec = assembleUrlValidate(Constants.BASE_URL + "Validate", data);
+        return sendHttpGetRequest(spec);
+    }
+
     public String downloadModules() {
         Map<String, String> data = new HashMap<>();
         data.put("Duration", "0");
@@ -132,6 +138,14 @@ public class IvleDownloader {
     private String assembleUrl(String restService, Map<String, String> data) {
         data.put("APIKey", controller.getApiKey());
         data.put("AuthToken", controller.getAuthToken());
+        List<String> attributes = new ArrayList<>();
+        for (String attribute : data.keySet()) attributes.add(attribute + "=" + data.get(attribute));
+        return restService + "?" + String.join("&", attributes);
+    }
+
+    private String assembleUrlValidate(String restService, Map<String, String> data) {
+        data.put("APIKey", controller.getApiKey());
+        data.put("Token", controller.getAuthToken());
         List<String> attributes = new ArrayList<>();
         for (String attribute : data.keySet()) attributes.add(attribute + "=" + data.get(attribute));
         return restService + "?" + String.join("&", attributes);
